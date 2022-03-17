@@ -1,6 +1,8 @@
 #!/usr/bin/python3.9
 # Copyright (c) 2022 Sylvie Liberman
 import asyncio
+import logging
+import random
 from forest.core import Bot, Message, run_bot
 
 
@@ -26,6 +28,7 @@ class RinkBot(Bot):
     async def start_process(self) -> None:
         self.rink = Rink()
         asyncio.create_task(self.rink.start_process())
+        await super().start_process()
 
     async def do_rink(self, message: Message) -> str:
         "performs unit conversion with rink.rs"
@@ -33,6 +36,9 @@ class RinkBot(Bot):
 
     do_r = do_rink
 
+    async def do_shuffle(self, message: Message) -> str:
+        random.shuffle(message.tokens)
+        return ", ".join(message.tokens)
 
 if __name__ == "__main__":
     run_bot(RinkBot)

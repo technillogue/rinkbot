@@ -164,7 +164,7 @@ ulid2 = "*"
 type = "git"
 url = "https://github.com/mobilecoinofficial/forest"
 reference = "poetry"
-resolved_reference = "2d634dff427efcc421d8cd1ad408265cfb71a6c2"
+resolved_reference = "5d734bedf027c3b0de10c10c0a411b8333e17860"
 
 [[package]]
 name = "frozenlist"
