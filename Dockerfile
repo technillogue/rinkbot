@@ -1,8 +1,8 @@
-FROM registry.gitlab.com/packaging/signal-cli/signal-cli-native:latest as signal
+FROM registry.gitlab.com/packaging/signal-cli/signal-cli-native:v0-11-5-1-2 as signal
 RUN signal-cli --version | tee /signal-version
 RUN mv /usr/bin/signal-cli-native /usr/bin/signal-cli
 
-FROM ubuntu:hirsute as rink
+FROM ubuntu:focal as rink
 WORKDIR /app
 RUN mkdir -p /app/data 
 RUN apt-get update
@@ -16,7 +16,7 @@ RUN python3.9 -m venv /app/venv
 COPY ./pyproject.toml ./poetry.lock /app/
 RUN VIRTUAL_ENV=/app/venv poetry install 
 
-FROM ubuntu:hirsute
+FROM ubuntu:focal
 WORKDIR /app
 RUN mkdir -p /app/data
 RUN apt-get update
@@ -29,4 +29,5 @@ COPY --from=rink /app/rink /app/
 RUN chmod +x /app/rink
 COPY --from=libbuilder /app/venv/lib/python3.9/site-packages /app/
 COPY .git/COMMIT_EDITMSG CHANGELOG.md rinkbot.py /app/ 
+ENV SIGNAL=signal-cli
 ENTRYPOINT ["/usr/bin/python3.9", "/app/rinkbot.py"]
