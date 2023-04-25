@@ -3,7 +3,8 @@
 import asyncio
 import logging
 import random
-from forest.core import Bot, Message, run_bot
+from aiohttp import web
+from forest.core import Bot, Message, run_bot, app
 
 
 class Rink:
@@ -40,5 +41,15 @@ class RinkBot(Bot):
         random.shuffle(message.tokens)
         return ", ".join(message.tokens)
 
+
+async def handle_route(request: web.Request) -> web.Response:
+    bot = request.app["bot"]
+    assert isinstance(bot, RinkBot)
+    out = await bot.rink.line(await request.text())
+    return web.Response(text=out)
+
+
+app.add_routes([web.post("/rink", handle_route)])
+
 if __name__ == "__main__":
-    run_bot(RinkBot)
+    run_bot(RinkBot, app)
